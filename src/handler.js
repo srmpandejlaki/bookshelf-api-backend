@@ -66,12 +66,30 @@ const addBookHandler = (request, h) => {
   return response;
 };
 
-const getAllBooksHandler = () => ({
-  status: 'success',
-  data: {
-    books
-  },
-});
+const getAllBooksHandler = (request, h) => {
+  let filtered = books;
+
+  if (request.query.name) {
+    filtered = filtered.filter((book) => book.name.toLowerCase().includes(request.query.name.toLowerCase()));
+  }
+
+  if (request.query.reading) {
+    filtered = filtered.filter((book) => book.reading === (request.query.reading === '1'));
+  }
+
+  if (request.query.finished !== undefined) {
+    filtered = filtered.filter((book) => (request.query.finished === '1') === (book.readPage === book.pageCount));
+  }
+
+  const response = h.response({
+    status: 'success',
+    data: {
+      books: filtered.map(({ id, name, publisher }) => ({ id, name, publisher })),
+    },
+  });
+  response.code(200);
+  return response;
+};
 
 const getBookByIdHandler = (request, h) => {
   const { id } = request.params;
@@ -119,7 +137,7 @@ const editBookByIdHandler = (request, h) => {
   if (!name) {
     const response = h.response({
       status: 'fail',
-      message: 'Gagak memperbarui buku. Mohon isi nama buku',
+      message: 'Gagal memperbarui buku. Mohon isi nama buku',
     });
     response.code(400);
     return response;
