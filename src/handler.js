@@ -60,7 +60,7 @@ const addBookHandler = (request, h) => {
 
   const response = h.response({
     status: 'fail',
-    message: 'Buku gagal ditambah',
+    message: 'Buku gagal ditambahkan',
   });
   response.code(400);
   return response;
