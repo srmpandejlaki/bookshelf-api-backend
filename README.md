@@ -66,43 +66,53 @@ Objek buku yang disimpan pada server harus memiliki struktur seperti contoh di b
   }
 </pre>
 Properti yang ditebalkan diolah dan didapatkan di sisi server. Berikut penjelasannya:
+<ul>
+  <li>id : nilai id haruslah unik. Untuk membuat nilai unik, Anda bisa memanfaatkan nanoid. Untuk Anda yang menggunakan CommonJS untuk sistem modularisasi, pastikan memasang nanoid versi 3 melalui perintah: npm install nanoid@3.</li>
+  <li>finished : merupakan properti boolean yang menjelaskan apakah buku telah selesai dibaca atau belum. Nilai finished didapatkan dari observasi pageCount === readPage.</li>
+  <li>insertedAt : merupakan properti yang menampung tanggal dimasukkannya buku. Anda bisa gunakan new Date().toISOString() untuk menghasilkan nilainya.</li>
+  <li>updatedAt : merupakan properti yang menampung tanggal diperbarui buku. Ketika buku baru dimasukkan, berikan nilai properti ini sama dengan insertedAt.</li>
+</ul>
 
-id : nilai id haruslah unik. Untuk membuat nilai unik, Anda bisa memanfaatkan nanoid. Untuk Anda yang menggunakan CommonJS untuk sistem modularisasi, pastikan memasang nanoid versi 3 melalui perintah: npm install nanoid@3.
-finished : merupakan properti boolean yang menjelaskan apakah buku telah selesai dibaca atau belum. Nilai finished didapatkan dari observasi pageCount === readPage.
-insertedAt : merupakan properti yang menampung tanggal dimasukkannya buku. Anda bisa gunakan new Date().toISOString() untuk menghasilkan nilainya.
-updatedAt : merupakan properti yang menampung tanggal diperbarui buku. Ketika buku baru dimasukkan, berikan nilai properti ini sama dengan insertedAt.
+Server harus merespons **gagal** bila:
+<ul>
+  <li>Client tidak melampirkan properti namepada request body. Bila hal ini terjadi, maka server akan merespons dengan:</li>
+  <ul>
+    <li>Status Code : 400</li>
+    <li>Response Body:</li>
+    <pre>
+      {
+          "status": "fail",
+          "message": "Gagal menambahkan buku. Mohon isi nama buku"
+      }
+    </pre>
+  </ul>
+  <li>Client melampirkan nilai properti readPage yang lebih besar dari nilai properti pageCount. Bila hal ini terjadi, maka server akan merespons dengan:</li>
+  <ul>
+    <li>Status Code : 400</li>
+    <li>Response Body:</li>
+    <pre>
+      {
+          "status": "fail",
+          "message": "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount"
+      }
+    </pre>
+  </ul>
+</ul>
 
-Server harus merespons gagal bila:
-
-Client tidak melampirkan properti namepada request body. Bila hal ini terjadi, maka server akan merespons dengan:
-Status Code : 400
-Response Body:
-
-{
-    "status": "fail",
-    "message": "Gagal menambahkan buku. Mohon isi nama buku"
-}
-Client melampirkan nilai properti readPage yang lebih besar dari nilai properti pageCount. Bila hal ini terjadi, maka server akan merespons dengan:
-Status Code : 400
-Response Body:
-
-{
-    "status": "fail",
-    "message": "Gagal menambahkan buku. readPage tidak boleh lebih besar dari pageCount"
-}
-Bila buku berhasil dimasukkan, server harus mengembalikan respons dengan:
-
-Status Code : 201
-Response Body:
-
-{
-    "status": "success",
-    "message": "Buku berhasil ditambahkan",
-    "data": {
-        "bookId": "1L7ZtDUFeGs7VlEt"
+Bila buku **berhasil** dimasukkan, server harus mengembalikan respons dengan:
+<ul>
+  <li>Status Code : 201</li>
+  <li>Response Body:</li>
+  <pre>
+    {
+        "status": "success",
+        "message": "Buku berhasil ditambahkan",
+        "data": {
+            "bookId": "1L7ZtDUFeGs7VlEt"
+        }
     }
-}
-
+  </pre>
+</ul>
 
 #### Kriteria 4 : API dapat menampilkan seluruh buku
 API yang Anda buat harus dapat menampilkan seluruh buku yang disimpan melalui route:
